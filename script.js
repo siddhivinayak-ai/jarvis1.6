@@ -55,13 +55,34 @@ function processCommand(command) {
     } else if (matchCommand(command, commands.music)) {
         playMusic();
     } else {
-        output.textContent = 'Sorry, I did not understand that command.';
+        const responseText = 'Sorry, I did not understand that command.';
+        output.textContent = responseText;
+        speakResponse(responseText);  // Speak the response
     }
 }
 
 // Helper function to match a command with keywords
 function matchCommand(command, keywords) {
     return keywords.some(keyword => command.includes(keyword));
+}
+
+// Function to make Jarvis respond with voice
+function speakResponse(text) {
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = text;
+
+    // Get available voices and select a female voice
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Voice'));
+
+    if (femaleVoice) {
+        msg.voice = femaleVoice;
+    } else {
+        msg.voice = voices[0]; // Fallback to the first available voice
+    }
+
+    // Speak the text
+    window.speechSynthesis.speak(msg);
 }
 
 // Fetch Weather Info
@@ -71,7 +92,9 @@ function getWeather() {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
         .then(response => response.json())
         .then(data => {
-            output.textContent = `The weather in ${city} is ${data.weather[0].description}, with a temperature of ${data.main.temp}°C.`;
+            const responseText = `The weather in ${city} is ${data.weather[0].description}, with a temperature of ${data.main.temp}°C.`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching weather data:', error));
 }
@@ -82,7 +105,9 @@ function getNews() {
     fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`)
         .then(response => response.json())
         .then(data => {
-            output.textContent = `Latest news: ${data.articles[0].title}`;
+            const responseText = `Latest news: ${data.articles[0].title}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching news:', error));
 }
@@ -90,13 +115,17 @@ function getNews() {
 // Get Current Time
 function getCurrentTime() {
     const now = new Date();
-    output.textContent = `The current time is ${now.getHours()}:${now.getMinutes()}`;
+    const responseText = `The current time is ${now.getHours()}:${now.getMinutes()}`;
+    output.textContent = responseText;
+    speakResponse(responseText);  // Speak the response
 }
 
 // Get Current Date
 function getCurrentDate() {
     const now = new Date();
-    output.textContent = `Today's date is ${now.toDateString()}`;
+    const responseText = `Today's date is ${now.toDateString()}`;
+    output.textContent = responseText;
+    speakResponse(responseText);  // Speak the response
 }
 
 // Convert Currency using ExchangeRate-API
@@ -106,7 +135,9 @@ function convertCurrency(from, to, amount) {
         .then(data => {
             const rate = data.rates[to];
             const convertedAmount = (amount * rate).toFixed(2);
-            output.textContent = `${amount} ${from} is equal to ${convertedAmount} ${to}`;
+            const responseText = `${amount} ${from} is equal to ${convertedAmount} ${to}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching currency conversion:', error));
 }
@@ -116,7 +147,9 @@ function solveMath(expression) {
     fetch(`https://api.mathjs.org/v4/?expr=${encodeURIComponent(expression)}`)
         .then(response => response.text())
         .then(data => {
-            output.textContent = `The result of ${expression} is ${data}`;
+            const responseText = `The result of ${expression} is ${data}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error solving math:', error));
 }
@@ -126,7 +159,9 @@ function getJoke() {
     fetch('https://official-joke-api.appspot.com/random_joke')
         .then(response => response.json())
         .then(data => {
-            output.textContent = `${data.setup} - ${data.punchline}`;
+            const responseText = `${data.setup} - ${data.punchline}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching joke:', error));
 }
@@ -136,7 +171,9 @@ function getQuote() {
     fetch('https://zenquotes.io/api/random')
         .then(response => response.json())
         .then(data => {
-            output.textContent = `"${data[0].q}" - ${data[0].a}`;
+            const responseText = `"${data[0].q}" - ${data[0].a}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching quote:', error));
 }
@@ -147,18 +184,24 @@ function getMovieRecommendation() {
     fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`)
         .then(response => response.json())
         .then(data => {
-            output.textContent = `Movie recommendation: ${data.results[0].title}`;
+            const responseText = `Movie recommendation: ${data.results[0].title}`;
+            output.textContent = responseText;
+            speakResponse(responseText);  // Speak the response
         })
         .catch(error => console.error('Error fetching movie recommendation:', error));
 }
 
 // Play Music using YouTube
 function playMusic() {
-    output.textContent = 'Playing music...';
+    const responseText = 'Playing music...';
+    output.textContent = responseText;
+    speakResponse(responseText);  // Speak the response
     // Add logic to play a specific song from YouTube using their API or embed
 }
 
 // Error handling for speech recognition
 recognition.onerror = function(event) {
-    output.textContent = 'Sorry, there was an error recognizing your speech.';
+    const errorMessage = 'Sorry, there was an error recognizing your speech.';
+    output.textContent = errorMessage;
+    speakResponse(errorMessage);  // Speak the error message
 };
